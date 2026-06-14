@@ -7,6 +7,7 @@ import UserManager from "./pages/UserManager";
 import SellerManager from "./pages/SellerManager";
 import CategoryManager from "./pages/CategoryManager";
 import BlogManager from "./pages/BlogManager";
+import BannerManager from "./pages/BannerManager";
 import LogsMonitor from "./pages/LogsMonitor";
 import AuditLogs from "./pages/AuditLogs";
 import "./index.css";
@@ -69,6 +70,7 @@ function App() {
             <Route path="/sellers" element={<SellerManager />} />
             <Route path="/categories" element={<CategoryManager />} />
             <Route path="/blogs" element={<BlogManager />} />
+            <Route path="/banners" element={<BannerManager />} />
             <Route path="/logs" element={<LogsMonitor />} />
             <Route path="/audit-logs" element={<AuditLogs />} />
             <Route path="*" element={<Navigate to="/" replace />} />

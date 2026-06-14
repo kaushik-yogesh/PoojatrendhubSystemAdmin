@@ -10,7 +10,8 @@ import {
   MdOutlineHistory,
   MdOutlineExitToApp,
   MdOutlineChevronLeft,
-  MdOutlineChevronRight
+  MdOutlineChevronRight,
+  MdOutlineViewCarousel
 } from "react-icons/md";
 
 const menuItems = [
@@ -19,6 +20,7 @@ const menuItems = [
   { name: "Seller Approvals", path: "/sellers", icon: MdOutlineStorefront },
   { name: "Category Tree", path: "/categories", icon: MdOutlineCategory },
   { name: "Blogs & CMS", path: "/blogs", icon: MdOutlineBook },
+  { name: "Banners & Slides", path: "/banners", icon: MdOutlineViewCarousel },
   { name: "Live Logs Monitor", path: "/logs", icon: MdOutlineReceiptLong },
   { name: "Admin Audit Logs", path: "/audit-logs", icon: MdOutlineHistory }
 ];
