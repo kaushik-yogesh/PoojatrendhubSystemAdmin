@@ -28,6 +28,10 @@ const DashboardOverview = () => {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [maintMsg, setMaintMsg] = useState("");
   const [maintLoading, setMaintLoading] = useState(false);
+  const [isAiEnabled, setIsAiEnabled] = useState(false);
+  const [aiType, setAiType] = useState("iframe");
+  const [aiValue, setAiValue] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const loadData = async () => {
@@ -41,6 +45,9 @@ const DashboardOverview = () => {
     if (!configRes.error && configRes.config) {
       setIsMaintenance(configRes.config.isMaintenanceMode);
       setMaintMsg(configRes.config.maintenanceMessage || "");
+      setIsAiEnabled(configRes.config.isAiSupportEnabled || false);
+      setAiType(configRes.config.aiSupportType || "iframe");
+      setAiValue(configRes.config.aiSupportValue || "");
     }
     setLoading(false);
   };
@@ -76,6 +83,22 @@ const DashboardOverview = () => {
       alert("Failed to toggle maintenance mode");
     }
     setMaintLoading(false);
+  };
+
+  const handleAiToggleAndSave = async (newVal) => {
+    setAiLoading(true);
+    const res = await postData("/api/system/config", {
+      isAiSupportEnabled: newVal,
+      aiSupportType: aiType,
+      aiSupportValue: aiValue
+    });
+    if (!res.error) {
+      setIsAiEnabled(newVal);
+      alert(`AI Support status updated to: ${newVal ? "Active" : "Disabled"}`);
+    } else {
+      alert("Failed to update AI Support status");
+    }
+    setAiLoading(false);
   };
 
   if (loading) {
@@ -293,6 +316,91 @@ const DashboardOverview = () => {
           </div>
         </div>
       )}
+
+      {/* AI Support Chatbot Controller */}
+      <div className="glass-panel p-6 rounded-2xl border border-slate-800/40 flex flex-col gap-5">
+        <div>
+          <h2 className="text-sm font-bold text-slate-200 mb-1">AI Support Agent Settings</h2>
+          <p className="text-[10px] text-slate-400">Configure your automated custom AI agent to chat with customers on the public store.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-4">
+            {/* Toggle Switch */}
+            <div className="flex items-center justify-between bg-slate-900/40 p-4 border border-slate-800/40 rounded-xl">
+              <div>
+                <span className="text-xs font-semibold text-slate-200">AI Assistant Status</span>
+                <p className="text-[10px] text-slate-400 mt-0.5">{isAiEnabled ? "Active & Visible" : "Hidden from site"}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleAiToggleAndSave(!isAiEnabled)}
+                disabled={aiLoading}
+                className={`w-12 h-6.5 rounded-full p-1 cursor-pointer transition-all duration-300 ${
+                  isAiEnabled ? "bg-violet-650" : "bg-slate-700"
+                }`}
+              >
+                <div
+                  className={`bg-white w-4.5 h-4.5 rounded-full transition-all duration-300 ${
+                    isAiEnabled ? "translate-x-5.5" : "translate-x-0"
+                  }`}
+                ></div>
+              </button>
+            </div>
+
+            {/* Type Selector */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">Integration Method</span>
+              <select
+                className="admin-select w-full"
+                value={aiType}
+                onChange={(e) => setAiType(e.target.value)}
+              >
+                <option value="iframe">Iframe Embed Link</option>
+                <option value="script">JavaScript Widget Code</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Value input (spans 2 columns) */}
+          <div className="md:col-span-2 flex flex-col justify-between gap-4">
+            <div className="flex flex-col gap-1.5 w-full">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">
+                {aiType === "iframe" ? "Iframe Share URL" : "JS script widget snippet"}
+              </span>
+              <textarea
+                rows={4}
+                className="w-full p-3 bg-slate-900/40 border border-slate-800 rounded-xl text-xs text-slate-300 font-mono focus:outline-none focus:border-violet-500/80 transition-all duration-300"
+                placeholder={
+                  aiType === "iframe"
+                    ? "e.g. https://interfaces.zapier.com/embed/page/..."
+                    : "e.g. <script src='https://embed.tawk.to/...'></script>"
+                }
+                value={aiValue}
+                onChange={(e) => setAiValue(e.target.value)}
+              />
+            </div>
+
+            <button
+              onClick={async () => {
+                setAiLoading(true);
+                const res = await postData("/api/system/config", {
+                  isAiSupportEnabled: isAiEnabled,
+                  aiSupportType: aiType,
+                  aiSupportValue: aiValue
+                });
+                if (!res.error) alert("AI settings updated successfully!");
+                else alert(res.message || "Failed to update AI settings");
+                setAiLoading(false);
+              }}
+              disabled={aiLoading}
+              className="px-5 py-2.5 bg-violet-650 hover:bg-violet-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-violet-500/10 active:scale-[0.98] transition-all cursor-pointer w-fit ml-auto"
+            >
+              {aiLoading ? "Saving..." : "Save AI Configuration"}
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Revenue & Growth Area Charts */}
       {analytics?.salesGraphData && (
