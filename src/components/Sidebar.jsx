@@ -16,12 +16,13 @@ import {
 
 const menuItems = [
   { name: "Health & Dashboard", path: "/", icon: MdOutlineDashboard },
+  { name: "Platform Financials", path: "/financials", icon: MdOutlineReceiptLong },
   { name: "User Management", path: "/users", icon: MdPeopleOutline },
   { name: "Seller Approvals", path: "/sellers", icon: MdOutlineStorefront },
   { name: "Category Tree", path: "/categories", icon: MdOutlineCategory },
   { name: "Blogs & CMS", path: "/blogs", icon: MdOutlineBook },
   { name: "Banners & Slides", path: "/banners", icon: MdOutlineViewCarousel },
-  { name: "Live Logs Monitor", path: "/logs", icon: MdOutlineReceiptLong },
+  { name: "Live Logs Monitor", path: "/logs", icon: MdOutlineHistory },
   { name: "Admin Audit Logs", path: "/audit-logs", icon: MdOutlineHistory }
 ];
 

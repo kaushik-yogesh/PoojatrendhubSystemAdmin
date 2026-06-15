@@ -10,6 +10,7 @@ import BlogManager from "./pages/BlogManager";
 import BannerManager from "./pages/BannerManager";
 import LogsMonitor from "./pages/LogsMonitor";
 import AuditLogs from "./pages/AuditLogs";
+import AdminFinancials from "./pages/AdminFinancials";
 import "./index.css";
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           <Routes>
             <Route path="/" element={<DashboardOverview />} />
+            <Route path="/financials" element={<AdminFinancials />} />
             <Route path="/users" element={<UserManager />} />
             <Route path="/sellers" element={<SellerManager />} />
             <Route path="/categories" element={<CategoryManager />} />

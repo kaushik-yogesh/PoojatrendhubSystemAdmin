@@ -17,6 +17,7 @@ const CategoryManager = () => {
   const [parentId, setParentId] = useState("");
   const [parentCatName, setParentCatName] = useState("");
   const [sortOrder, setSortOrder] = useState(0);
+  const [commissionRate, setCommissionRate] = useState(5);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -49,6 +50,7 @@ const CategoryManager = () => {
     setParentId(pId);
     setParentCatName(pName);
     setSortOrder(0);
+    setCommissionRate(5);
     setModalOpen(true);
   };
 
@@ -61,6 +63,7 @@ const CategoryManager = () => {
     setParentId(cat.parentId || "");
     setParentCatName(cat.parentCatName || "");
     setSortOrder(cat.sortOrder ?? 0);
+    setCommissionRate(cat.commissionRate || 5);
     setModalOpen(true);
   };
 
@@ -114,7 +117,8 @@ const CategoryManager = () => {
       images: finalImages,
       parentId: parentId || undefined,
       parentCatName: parentCatName || undefined,
-      sortOrder: Number(sortOrder) || 0
+      sortOrder: Number(sortOrder) || 0,
+      commissionRate: Number(commissionRate) || 5
     };
 
     let res;
@@ -158,7 +162,9 @@ const CategoryManager = () => {
               )}
             </div>
             <span className="text-xs font-semibold text-slate-200">
-              {node.name} <span className="text-[10px] ml-2 text-slate-400">#{node.sortOrder ?? 0}</span>
+              {node.name} 
+              <span className="text-[10px] ml-2 text-slate-400">#{node.sortOrder ?? 0}</span>
+              <span className="text-[10px] ml-2 px-1.5 py-0.5 bg-violet-600/20 text-violet-400 rounded-md font-bold">{node.commissionRate || 5}% Fee</span>
             </span>
           </div>
 
@@ -281,6 +287,22 @@ const CategoryManager = () => {
                   onChange={(e) => setSortOrder(e.target.value)}
                 />
               </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
+                  Commission Rate (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  className="w-full h-11 px-4 bg-slate-900/60 border border-slate-800 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-violet-500"
+                  placeholder="Enter platform fee percentage (e.g. 5)"
+                  value={commissionRate}
+                  onChange={(e) => setCommissionRate(e.target.value)}
+                />
+              </div>
+
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
                   Image URL (Option 1)
