@@ -4,7 +4,6 @@ import {
   AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Legend
 } from "recharts";
 import { FiDollarSign, FiActivity, FiShield, FiTrendingUp } from "react-icons/fi";
-import { CircularProgress } from "@mui/material";
 
 const RANGE_OPTIONS = [
   { label: "Last 7 Days", value: 7 },
@@ -64,7 +63,7 @@ export default function AdminFinancials() {
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <CircularProgress sx={{ color: '#8b5cf6' }} />
+          <div className="w-10 h-10 border-4 border-violet-500/30 border-t-violet-500 rounded-full animate-spin"></div>
         </div>
       ) : (
         <div className="animate-fade-in space-y-6">
