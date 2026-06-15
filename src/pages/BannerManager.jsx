@@ -17,6 +17,8 @@ import {
 const emptyBannerForm = {
   bannerTitle: "",
   price: "",
+  discount: "",
+  offerTag: "",
   imageUrl: "", // custom URL field for input
   catId: "",
   category: "",
@@ -205,6 +207,8 @@ const BannerManager = () => {
     setBannerForm({
       bannerTitle: banner.bannerTitle || "",
       price: banner.price !== undefined ? banner.price : "",
+      discount: banner.discount !== undefined ? banner.discount : "",
+      offerTag: banner.offerTag || "",
       imageUrl: banner.images?.[0] || "",
       catId: banner.catId || "",
       category: banner.category || "",
@@ -301,6 +305,8 @@ const BannerManager = () => {
     const payload = {
       bannerTitle: bannerForm.bannerTitle,
       price: Number(bannerForm.price) || 0,
+      discount: Number(bannerForm.discount) || 0,
+      offerTag: bannerForm.offerTag,
       images: finalImages,
       catId: bannerForm.catId,
       category: bannerForm.category,
@@ -516,12 +522,24 @@ const BannerManager = () => {
                       <MdOutlineImage size={40} className="text-slate-700" />
                     )}
                     
-                    {banner.price > 0 && (
-                      <div className="absolute bottom-3 left-3 bg-slate-900/95 border border-slate-800 px-2.5 py-1 rounded-lg flex items-center gap-1 text-green-400 text-[10px] font-bold shadow-lg backdrop-blur-md">
-                        <MdOutlineLocalOffer size={11} />
-                        ₹{banner.price}
-                      </div>
-                    )}
+                    <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
+                      {banner.price > 0 && (
+                        <div className="bg-slate-900/95 border border-slate-800 px-2.5 py-1 rounded-lg flex items-center gap-1 text-green-400 text-[10px] font-bold shadow-lg backdrop-blur-md">
+                          <MdOutlineLocalOffer size={11} />
+                          ₹{banner.price}
+                        </div>
+                      )}
+                      {banner.discount > 0 && (
+                        <div className="bg-rose-950/95 border border-rose-800/60 px-2 py-0.5 rounded-lg flex items-center gap-1 text-rose-400 text-[9px] font-bold shadow-lg backdrop-blur-md">
+                          {banner.discount}% Off
+                        </div>
+                      )}
+                      {banner.offerTag && (
+                        <div className="bg-violet-955/95 border border-violet-800/60 px-2 py-0.5 rounded-lg flex items-center gap-1 text-violet-400 text-[9px] font-bold shadow-lg backdrop-blur-md">
+                          {banner.offerTag}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Banner Details */}
@@ -696,18 +714,44 @@ const BannerManager = () => {
                 />
               </div>
 
-              {/* Price */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
-                  Price Badge (Optional)
-                </label>
-                <input
-                  type="number"
-                  placeholder="e.g. 499 (Displays as ₹499)"
-                  className="admin-input"
-                  value={bannerForm.price}
-                  onChange={(e) => setBannerForm({ ...bannerForm, price: e.target.value })}
-                />
+              {/* Price, Discount & Offer Tag Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
+                    Price Badge
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 499"
+                    className="admin-input"
+                    value={bannerForm.price}
+                    onChange={(e) => setBannerForm({ ...bannerForm, price: e.target.value })}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
+                    Min Discount (%)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 20"
+                    className="admin-input"
+                    value={bannerForm.discount}
+                    onChange={(e) => setBannerForm({ ...bannerForm, discount: e.target.value })}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
+                    Offer Tag / Badge
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Flat 50% Off"
+                    className="admin-input"
+                    value={bannerForm.offerTag}
+                    onChange={(e) => setBannerForm({ ...bannerForm, offerTag: e.target.value })}
+                  />
+                </div>
               </div>
 
               {/* Image Input Selection */}
