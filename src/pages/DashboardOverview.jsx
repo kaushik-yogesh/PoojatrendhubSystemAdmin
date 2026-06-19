@@ -28,6 +28,8 @@ const DashboardOverview = () => {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [maintMsg, setMaintMsg] = useState("");
   const [maintLoading, setMaintLoading] = useState(false);
+  const [isLandingPageEnabled, setIsLandingPageEnabled] = useState(false);
+  const [landingLoading, setLandingLoading] = useState(false);
   const [isAiEnabled, setIsAiEnabled] = useState(false);
   const [aiType, setAiType] = useState("iframe");
   const [aiValue, setAiValue] = useState("");
@@ -45,6 +47,7 @@ const DashboardOverview = () => {
     if (!configRes.error && configRes.config) {
       setIsMaintenance(configRes.config.isMaintenanceMode);
       setMaintMsg(configRes.config.maintenanceMessage || "");
+      setIsLandingPageEnabled(configRes.config.isLandingPageEnabled || false);
       setIsAiEnabled(configRes.config.isAiSupportEnabled || false);
       setAiType(configRes.config.aiSupportType || "iframe");
       setAiValue(configRes.config.aiSupportValue || "");
@@ -83,6 +86,20 @@ const DashboardOverview = () => {
       alert("Failed to toggle maintenance mode");
     }
     setMaintLoading(false);
+  };
+
+  const handleLandingToggle = async (newVal) => {
+    setLandingLoading(true);
+    const res = await postData("/api/system/config", {
+      isLandingPageEnabled: newVal
+    });
+    if (!res.error) {
+      setIsLandingPageEnabled(newVal);
+      alert(`Landing Page status updated to: ${newVal ? "Active" : "Disabled"}`);
+    } else {
+      alert("Failed to update Landing Page status");
+    }
+    setLandingLoading(false);
   };
 
   const handleAiToggleAndSave = async (newVal) => {
@@ -399,6 +416,35 @@ const DashboardOverview = () => {
               {aiLoading ? "Saving..." : "Save AI Configuration"}
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Landing Page Settings */}
+      <div className="glass-panel p-6 rounded-2xl border border-slate-800/40 flex flex-col gap-5">
+        <div>
+          <h2 className="text-sm font-bold text-slate-200 mb-1">Landing Page Settings</h2>
+          <p className="text-[10px] text-slate-400">Enable or disable the custom promotional landing page at the root (/) of the public store.</p>
+        </div>
+
+        <div className="flex items-center justify-between bg-slate-900/40 p-4 border border-slate-800/40 rounded-xl w-full md:w-1/3">
+          <div>
+            <span className="text-xs font-semibold text-slate-200">Landing Page Status</span>
+            <p className="text-[10px] text-slate-400 mt-0.5">{isLandingPageEnabled ? "Active & Visible" : "Disabled (Direct to Store)"}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleLandingToggle(!isLandingPageEnabled)}
+            disabled={landingLoading}
+            className={`w-12 h-6.5 rounded-full p-1 cursor-pointer transition-all duration-300 ${
+              isLandingPageEnabled ? "bg-violet-650" : "bg-slate-700"
+            }`}
+          >
+            <div
+              className={`bg-white w-4.5 h-4.5 rounded-full transition-all duration-300 ${
+                isLandingPageEnabled ? "translate-x-5.5" : "translate-x-0"
+              }`}
+            ></div>
+          </button>
         </div>
       </div>
 
