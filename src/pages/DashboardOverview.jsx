@@ -36,6 +36,15 @@ const DashboardOverview = () => {
   const [aiLoading, setAiLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Festival Screen States
+  const [festivalEnabled, setFestivalEnabled] = useState(false);
+  const [festivalTitle, setFestivalTitle] = useState("Happy New Year");
+  const [festivalSubtitle, setFestivalSubtitle] = useState("Wishing you joy, peace and prosperity!");
+  const [festivalTheme, setFestivalTheme] = useState("Fireworks");
+  const [festivalDuration, setFestivalDuration] = useState(13);
+  const [festivalCustomHtml, setFestivalCustomHtml] = useState("");
+  const [festivalLoading, setFestivalLoading] = useState(false);
+
   const loadData = async () => {
     setLoading(true);
     const healthRes = await fetchDataFromApi("/api/system/health");
@@ -51,6 +60,13 @@ const DashboardOverview = () => {
       setIsAiEnabled(configRes.config.isAiSupportEnabled || false);
       setAiType(configRes.config.aiSupportType || "iframe");
       setAiValue(configRes.config.aiSupportValue || "");
+      // Festival settings
+      setFestivalEnabled(configRes.config.isFestivalModeEnabled || false);
+      setFestivalTitle(configRes.config.festivalTitle || "Happy New Year");
+      setFestivalSubtitle(configRes.config.festivalSubtitle || "Wishing you joy, peace and prosperity!");
+      setFestivalTheme(configRes.config.festivalTheme || "Fireworks");
+      setFestivalDuration(configRes.config.festivalDuration || 13);
+      setFestivalCustomHtml(configRes.config.festivalCustomHtml || "");
     }
     setLoading(false);
   };
@@ -100,6 +116,25 @@ const DashboardOverview = () => {
       alert("Failed to update Landing Page status");
     }
     setLandingLoading(false);
+  };
+
+  const handleFestivalSave = async (enabled = festivalEnabled) => {
+    setFestivalLoading(true);
+    const res = await postData("/api/system/config", {
+      isFestivalModeEnabled: enabled,
+      festivalTitle,
+      festivalSubtitle,
+      festivalTheme,
+      festivalDuration: Number(festivalDuration),
+      festivalCustomHtml
+    });
+    if (!res.error) {
+      setFestivalEnabled(enabled);
+      alert(`Festival Screen ${enabled ? "enabled" : "disabled"} and settings saved!`);
+    } else {
+      alert(res.message || "Failed to update Festival settings");
+    }
+    setFestivalLoading(false);
   };
 
   const handleAiToggleAndSave = async (newVal) => {
@@ -417,6 +452,126 @@ const DashboardOverview = () => {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Festival Screen Settings */}
+      <div className="glass-panel p-6 rounded-2xl border border-slate-800/40 flex flex-col gap-5">
+        <div>
+          <h2 className="text-sm font-bold text-slate-200 mb-1">🎆 Festival Screen Settings</h2>
+          <p className="text-[10px] text-slate-400">Control the animated holiday/festival overlay shown to customers when they first visit the store.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Enable Toggle */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between bg-slate-900/40 p-4 border border-slate-800/40 rounded-xl">
+              <div>
+                <span className="text-xs font-semibold text-slate-200">Festival Mode</span>
+                <p className="text-[10px] text-slate-400 mt-0.5">{festivalEnabled ? "Active & Visible" : "Hidden from site"}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleFestivalSave(!festivalEnabled)}
+                disabled={festivalLoading}
+                className={`w-12 h-6.5 rounded-full p-1 cursor-pointer transition-all duration-300 ${
+                  festivalEnabled ? "bg-pink-500" : "bg-slate-700"
+                }`}
+              >
+                <div className={`bg-white w-4.5 h-4.5 rounded-full transition-all duration-300 ${
+                  festivalEnabled ? "translate-x-5.5" : "translate-x-0"
+                }`}></div>
+              </button>
+            </div>
+
+            {/* Theme Selector */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">Animation Theme</span>
+              <select
+                className="admin-select w-full"
+                value={festivalTheme}
+                onChange={(e) => setFestivalTheme(e.target.value)}
+              >
+                <option value="Fireworks">🎆 Fireworks (New Year)</option>
+                <option value="Snowfall">❄️ Snowfall (Winter / Xmas)</option>
+                <option value="Confetti">🎉 Confetti (Celebration)</option>
+                <option value="Hearts">💝 Hearts (Valentine's)</option>
+                <option value="CustomHTML">📝 Custom HTML</option>
+              </select>
+            </div>
+
+            {/* Duration */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">Auto-dismiss Duration (seconds): {festivalDuration}s</span>
+              <input
+                type="range"
+                min={5} max={30} step={1}
+                value={festivalDuration}
+                onChange={(e) => setFestivalDuration(e.target.value)}
+                className="w-full accent-pink-500 cursor-pointer"
+              />
+            </div>
+          </div>
+
+          {/* Title & Subtitle */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">Greeting Title</span>
+              <input
+                type="text"
+                maxLength={60}
+                value={festivalTitle}
+                onChange={(e) => setFestivalTitle(e.target.value)}
+                placeholder="e.g. Happy Diwali!"
+                className="w-full p-3 bg-slate-900/40 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-pink-500/80 transition-all"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">Greeting Subtitle</span>
+              <textarea
+                rows={4}
+                maxLength={200}
+                value={festivalSubtitle}
+                onChange={(e) => setFestivalSubtitle(e.target.value)}
+                placeholder="A warm message for your customers..."
+                className="w-full p-3 bg-slate-900/40 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-pink-500/80 transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Custom HTML (shown when theme = CustomHTML) */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-semibold uppercase text-slate-400 ml-1">
+                {festivalTheme === "CustomHTML" ? "Custom HTML / CSS" : "Preview Theme"}
+              </span>
+              {festivalTheme === "CustomHTML" ? (
+                <textarea
+                  rows={9}
+                  value={festivalCustomHtml}
+                  onChange={(e) => setFestivalCustomHtml(e.target.value)}
+                  placeholder="Enter full HTML/CSS to render as the festival background..."
+                  className="w-full p-3 bg-slate-900/40 border border-slate-800 rounded-xl text-xs text-slate-300 font-mono focus:outline-none focus:border-pink-500/80 transition-all"
+                />
+              ) : (
+                <div className="rounded-xl overflow-hidden border border-slate-800/40 h-[180px] flex items-center justify-center"
+                  style={{ background: festivalTheme === "Hearts" ? "#0c0212" : festivalTheme === "Snowfall" ? "#050a1e" : festivalTheme === "Confetti" ? "#0a0514" : "#0c0610" }}
+                >
+                  <span style={{ fontSize: "48px" }}>
+                    {festivalTheme === "Hearts" ? "💝" : festivalTheme === "Snowfall" ? "❄️" : festivalTheme === "Confetti" ? "🎉" : "🎆"}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => handleFestivalSave(festivalEnabled)}
+          disabled={festivalLoading}
+          className="px-5 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-pink-500/20 active:scale-[0.98] transition-all cursor-pointer w-fit"
+        >
+          {festivalLoading ? "Saving..." : "Save Festival Settings"}
+        </button>
       </div>
 
       {/* Landing Page Settings */}
