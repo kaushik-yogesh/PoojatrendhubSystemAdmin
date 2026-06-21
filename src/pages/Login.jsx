@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { postData, fetchDataFromApi } from "../utils/api";
 import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
+import ForgotPassword from "./ForgotPassword";
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+
+  if (showForgot) {
+    return <ForgotPassword onBack={() => setShowForgot(false)} />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,6 +120,14 @@ const Login = ({ onLoginSuccess }) => {
             className="w-full h-11 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold tracking-wide shadow-lg shadow-violet-500/10 active:scale-[0.98] transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:pointer-events-none mt-2"
           >
             {loading ? "Authenticating..." : "Sign In"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowForgot(true)}
+            className="text-xs text-slate-500 hover:text-violet-400 text-center transition-colors bg-transparent border-none cursor-pointer mt-1"
+          >
+            Forgot Password?
           </button>
         </form>
       </div>
