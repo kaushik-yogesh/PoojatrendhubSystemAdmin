@@ -18,6 +18,7 @@ const CategoryManager = () => {
   const [parentCatName, setParentCatName] = useState("");
   const [sortOrder, setSortOrder] = useState(0);
   const [commissionRate, setCommissionRate] = useState(5);
+  const [redirectLink, setRedirectLink] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -51,6 +52,7 @@ const CategoryManager = () => {
     setParentCatName(pName);
     setSortOrder(0);
     setCommissionRate(5);
+    setRedirectLink("");
     setModalOpen(true);
   };
 
@@ -64,6 +66,7 @@ const CategoryManager = () => {
     setParentCatName(cat.parentCatName || "");
     setSortOrder(cat.sortOrder ?? 0);
     setCommissionRate(cat.commissionRate || 5);
+    setRedirectLink(cat.redirectLink || "");
     setModalOpen(true);
   };
 
@@ -118,7 +121,8 @@ const CategoryManager = () => {
       parentId: parentId || undefined,
       parentCatName: parentCatName || undefined,
       sortOrder: Number(sortOrder) || 0,
-      commissionRate: Number(commissionRate) || 5
+      commissionRate: Number(commissionRate) || 5,
+      redirectLink: redirectLink || ""
     };
 
     let res;
@@ -300,6 +304,19 @@ const CategoryManager = () => {
                   placeholder="Enter platform fee percentage (e.g. 5)"
                   value={commissionRate}
                   onChange={(e) => setCommissionRate(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase ml-1">
+                  Redirect Link (Optional)
+                </label>
+                <input
+                  type="text"
+                  className="w-full h-11 px-4 bg-slate-900/60 border border-slate-800 rounded-xl text-slate-200 text-xs focus:outline-none focus:border-violet-500"
+                  placeholder="e.g. /grocery or external URL"
+                  value={redirectLink}
+                  onChange={(e) => setRedirectLink(e.target.value)}
                 />
               </div>
 
